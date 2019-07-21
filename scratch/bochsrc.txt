@@ -1,0 +1,31 @@
+###############################################################
+# bochsrc.txt file for DLX Linux disk image.
+###############################################################
+
+# how much memory the emulated machine will have
+megs: 4
+
+# filename of ROM images
+romimage: file=$BXSHARE/BIOS-bochs-latest 
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
+
+# hard disk
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+ata0-master: type=disk, path="os.img", cylinders=20, heads=16, spt=63 mode=flat
+
+# choose the boot disk.
+boot: disk
+#floppya: 360k="os.img", status=inserted, write_protected=0 
+
+# where do we send log messages?
+#log: bochsout.txt
+
+# disable the mouse, since DLX is text only
+#mouse: enabled=0
+
+# GUI debugger
+#display_library: x, options="gui_debug"
+
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+port_e9_hack: enabled=1		# for testing log
+parport1: enabled=1, file="debug.log"	# for debugging log

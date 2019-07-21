@@ -1,0 +1,73 @@
+#!/bin/sh
+#
+# .conf.linux
+#
+
+#which_config=normal
+which_config=gdb
+
+CC="gcc"
+CXX="c++"
+CFLAGS="-Wall -O3 -fomit-frame-pointer -pipe"    # for speed
+#CFLAGS="-Wall -g -pipe"                         # for development
+CXXFLAGS="$CFLAGS"
+
+export CC
+export CXX
+export CFLAGS
+export CXXFLAGS
+
+
+case $which_config in
+
+  gui)
+
+    #######################################################################
+    # configuration 1 for release binary RPMs
+    # Include a few standard options, speed optimizations, X11 only.
+    #######################################################################
+    ./configure --enable-sb16 \
+                --enable-ne2000 \
+                --enable-all-optimizations \
+                --enable-cpu-level=4 \
+                --enable-pci \
+		--enable-debugger \
+                --enable-clgd54xx \
+		--enable-x86-debugger \
+		--enable-debugger-gui \
+		#--enable-gdb-stub \
+                --enable-usb \
+                --enable-usb-ohci \
+                --enable-es1370 \
+                --enable-e1000 \
+                --enable-show-ips \
+                ${CONFIGURE_ARGS}
+    ;;
+
+  gdb)
+    #######################################################################
+    # configuration 2 for release binary RPMs
+    # Include plugins, every possible gui.
+    #######################################################################
+    ./configure --enable-sb16 \
+                --enable-ne2000 \
+                --enable-all-optimizations \
+                --enable-cpu-level=4 \
+                --enable-pci \
+		--enable-gdb-stub \
+		#--enable-debugger \
+                --enable-clgd54xx \
+		#--enable-x86-debugger \
+                --enable-voodoo \
+		#--enable-debugger-gui \
+                --enable-usb \
+                --enable-usb-ohci \
+                --enable-usb-xhci \
+                --enable-es1370 \
+                --enable-e1000 \
+                --enable-show-ips \
+		#--enable-port-e9-hack \
+                ${CONFIGURE_ARGS}
+    ;;
+
+esac
