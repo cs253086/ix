@@ -1,4 +1,0 @@
-[Debugging IX]
-1. GDB 
- - when you use gdb to debug ix and if you want to debug it from the beginning, set a breakpoint at 'b *0x00007e0a' or 'main'
- - when you want to debug fs, set breakpoint function or variable directly, but not 'main'
