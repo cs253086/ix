@@ -24,8 +24,58 @@ _start:
 	mov 0x0200, %ax	/* set the cursor position */
 	xor %bx, %bx	/* set page number to 0 */
 	xor %dx, %dx	/* set row and column to 0 */
-	mov greeting, %bx	/* set a message to print */
+	mov greeting_msg, %bx	/* set a message to print */
 	call print
 
+	/* get total memory size */
+	mov 0xE801, ax
+	int 0x15
+	jc memory_size_fail
+	test ax, ax	/* if size == 0 */
+	je memory_size_fail
+	cmp 0x86, ah	/* unspported function */
+	je memory_size_fail
+	cmp 0x80, ah	/* invalid command */
+	je memory_size_fail
+	mov ax, [mem_size]
+
+	/* check if 'INT 0x13' extension for LBA is supported */
+	mov 0x41, ah
+	mov 0x55AA, bx
+	mov DRIVE, dl
+	int 0x13
+	jc os_load_fail
+
+	/* load OS from disk/diskette into memory (LBA mode)
+	 * while (tmp > MAX_SECTORS_PER_READ) {
+	 * 		read
+	 *		tmp = tmp - MAX_SECTORS_PER_READ
+	 *		read
+	 * }
+	 */
+load_os:
+.Lread:
+	mov MAX_SECTORS_PER_READ
+	mov dapack, si
+	mov 0x42, ah
+	mov DRIVE, dl
+	int 0x13
+	jc os_load_fail
+	mov MAX_BYTES_PER_READ	/* dst_seg += MAX_BYTES_PER_READ */
+	shr 4, ax /* remember that physical address is represented in 16bit on 8086 */
+	add ax, [dst_seg]
+	add MAX_SECTORS_PER_READ, [sectors_read_sofar]
+	add MAX_SECTORS_PER_READ, [lba]
+	mov [sectors_read_sofar], ax
+	cmp [os_size_sector], ax
+	jb .Lread
+
+
+
+
+
+
+
 greeting_msg:
-	db "Booting IX", 0x00	
+	db "Booting IX", 0x00
+
